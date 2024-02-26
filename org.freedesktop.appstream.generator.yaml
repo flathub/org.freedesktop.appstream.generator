@@ -1,12 +1,12 @@
 ---
 app-id: org.freedesktop.appstream.generator
 runtime: org.freedesktop.Platform
-runtime-version: '22.08'
+runtime-version: '23.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
  - org.freedesktop.Sdk.Extension.ldc
- - org.freedesktop.Sdk.Extension.llvm14
- - org.freedesktop.Sdk.Extension.node18
+ - org.freedesktop.Sdk.Extension.llvm16
+ - org.freedesktop.Sdk.Extension.node20
 command: appstream-generator
 separate-locales: false
 
@@ -19,7 +19,7 @@ finish-args:
 
 add-extensions:
   org.freedesktop.Platform.ffmpeg-full:
-    version: '22.08'
+    version: '23.08'
     directory: lib/ffmpeg
     add-ld-path: '.'
     autodelete: false
@@ -63,7 +63,7 @@ modules:
   sources:
    - type: git
      url: https://github.com/hughsie/libxmlb.git
-     tag: '0.3.10'
+     tag: '0.3.14'
 
 - name: appstream
   buildsystem: meson
@@ -76,7 +76,7 @@ modules:
   sources:
    - type: git
      url: https://github.com/ximion/appstream.git
-     tag: v0.16.2
+     tag: v1.0.2
 
 - name: lmdb
   no-autogen: true
@@ -107,14 +107,14 @@ modules:
   sources:
    - type: git
      url: https://github.com/gtkd-developers/gir-to-d.git
-     tag: v0.23.1
+     tag: v0.23.2
 
 - name: glib-d
   buildsystem: meson
   sources:
    - type: git
      url: https://github.com/gtkd-developers/GlibD.git
-     tag: v2.4.2
+     tag: v2.4.3
 
 - name: optipng
   build-options:
@@ -140,8 +140,6 @@ modules:
    - yarn-sources.json
    - type: git
      url: https://github.com/ximion/appstream-generator.git
-     tag: v0.9.0
+     tag: v0.9.1
    - type: patch
-     path: patches/asgen-add-yarn-lock.patch
-   - type: patch
-     path: patches/asgen-metainfo-add-release.patch
+     path: patches/asgen-metainfo-add-developer.patch

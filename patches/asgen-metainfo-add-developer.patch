@@ -1,0 +1,23 @@
+From 6c2fbbd6dc0973e2a4f3b2109525ebb3d790437b Mon Sep 17 00:00:00 2001
+From: Matthias Klumpp <matthias@tenstral.net>
+Date: Mon, 26 Feb 2024 00:17:03 +0100
+Subject: [PATCH] metainfo: Add developer name
+
+---
+ data/org.freedesktop.appstream.generator.metainfo.xml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/data/org.freedesktop.appstream.generator.metainfo.xml b/data/org.freedesktop.appstream.generator.metainfo.xml
+index 1c176c3..258ea28 100644
+--- a/data/org.freedesktop.appstream.generator.metainfo.xml
++++ b/data/org.freedesktop.appstream.generator.metainfo.xml
+@@ -32,6 +32,9 @@
+   <url type="bugtracker">https://github.com/ximion/appstream-generator/issues</url>
+ 
+   <project_group>Freedesktop</project_group>
++  <developer id="org.freedesktop">
++    <name translate="no">Matthias Klumpp</name>
++  </developer>
+ 
+   <provides>
+     <binary>appstream-generator</binary>
