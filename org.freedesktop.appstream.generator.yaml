@@ -1,12 +1,12 @@
 ---
 app-id: org.freedesktop.appstream.generator
 runtime: org.freedesktop.Platform
-runtime-version: '23.08'
+runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
  - org.freedesktop.Sdk.Extension.ldc
- - org.freedesktop.Sdk.Extension.llvm16
- - org.freedesktop.Sdk.Extension.node20
+ - org.freedesktop.Sdk.Extension.llvm20
+ - org.freedesktop.Sdk.Extension.node24
 command: appstream-generator
 separate-locales: false
 
@@ -19,7 +19,7 @@ finish-args:
 
 add-extensions:
   org.freedesktop.Platform.ffmpeg-full:
-    version: '23.08'
+    version: '24.08'
     directory: lib/ffmpeg
     add-ld-path: '.'
     autodelete: false
@@ -63,7 +63,7 @@ modules:
   sources:
    - type: git
      url: https://github.com/hughsie/libxmlb.git
-     tag: '0.3.14'
+     tag: '0.3.22'
 
 - name: appstream
   buildsystem: meson
@@ -76,7 +76,7 @@ modules:
   sources:
    - type: git
      url: https://github.com/ximion/appstream.git
-     tag: v1.0.2
+     tag: v1.0.5
 
 - name: lmdb
   no-autogen: true
@@ -91,7 +91,7 @@ modules:
   sources:
    - type: archive
      url: https://git.openldap.org/openldap/openldap/-/archive/LMDB_0.9.30/openldap-LMDB_0.9.30.tar.bz2
-     sha256: eb16ed6fd535b85857c331b93e7f9fd790bc9fcea3fa26162befdc1ba2775668
+     sha256: f476bfc13d413ec99164747e62e8c738bda02941cb2672fbab7ec551d8a2c914
    - type: file
      path: extra/lmdb.pc
      dest: libraries/liblmdb/
@@ -107,7 +107,7 @@ modules:
   sources:
    - type: git
      url: https://github.com/gtkd-developers/gir-to-d.git
-     tag: v0.23.2
+     tag: '0.23.4'
 
 - name: glib-d
   buildsystem: meson
@@ -140,6 +140,4 @@ modules:
    - yarn-sources.json
    - type: git
      url: https://github.com/ximion/appstream-generator.git
-     tag: v0.9.1
-   - type: patch
-     path: patches/asgen-metainfo-add-developer.patch
+     tag: v0.9.2
