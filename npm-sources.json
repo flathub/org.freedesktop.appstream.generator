@@ -1,0 +1,23 @@
+[
+    {
+        "dest": "npm-cache/_cacache/content-v2/sha512/14/ad",
+        "dest-filename": "6f98c8fc05b122a44cbc0cb22fa7bd6de54b02ee7d83e849ff51f33ff753c2c263a98fa7f68aed18d1ca110bad8a4911c70be76ab8cdb13142d5fd7ecd16",
+        "sha512": "14ad6f98c8fc05b122a44cbc0cb22fa7bd6de54b02ee7d83e849ff51f33ff753c2c263a98fa7f68aed18d1ca110bad8a4911c70be76ab8cdb13142d5fd7ecd16",
+        "type": "file",
+        "url": "https://registry.npmjs.org/highlightjs/-/highlightjs-9.16.2.tgz"
+    },
+    {
+        "dest": "npm-cache/_cacache/content-v2/sha512/9b/86",
+        "dest-filename": "afafcc8bf2498537ca6cadb14516607f21fd7888de68f67c3f3609e733e9326c326946c0329d5d81b1fa5362b4d1cac6147400d50fb0a45148b3824a4b7e",
+        "sha512": "9b86afafcc8bf2498537ca6cadb14516607f21fd7888de68f67c3f3609e733e9326c326946c0329d5d81b1fa5362b4d1cac6147400d50fb0a45148b3824a4b7e",
+        "type": "file",
+        "url": "https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz"
+    },
+    {
+        "dest": "npm-cache/_cacache/content-v2/sha512/22/44",
+        "dest-filename": "02b00e6de7902e6eef22a2f7bf5ff28bdf8add653b03cb1fdbca50bb177db43766f0b098497b7369f28aecc752fc1443a83037cd7b7fe949bdf15ca2f179",
+        "sha512": "224402b00e6de7902e6eef22a2f7bf5ff28bdf8add653b03cb1fdbca50bb177db43766f0b098497b7369f28aecc752fc1443a83037cd7b7fe949bdf15ca2f179",
+        "type": "file",
+        "url": "https://registry.npmjs.org/jquery-flot/-/jquery-flot-0.8.3.tgz"
+    }
+]

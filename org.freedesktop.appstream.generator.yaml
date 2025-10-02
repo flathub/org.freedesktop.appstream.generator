@@ -1,28 +1,16 @@
 ---
 app-id: org.freedesktop.appstream.generator
 runtime: org.freedesktop.Platform
-runtime-version: '23.08'
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
- - org.freedesktop.Sdk.Extension.ldc
- - org.freedesktop.Sdk.Extension.llvm16
- - org.freedesktop.Sdk.Extension.node20
+ - org.freedesktop.Sdk.Extension.node24
 command: appstream-generator
 separate-locales: false
-
-build-options:
-  append-path: /usr/lib/sdk/ldc/bin
 
 finish-args:
  - --filesystem=host
  - --share=network
-
-add-extensions:
-  org.freedesktop.Platform.ffmpeg-full:
-    version: '23.08'
-    directory: lib/ffmpeg
-    add-ld-path: '.'
-    autodelete: false
 
 cleanup-commands:
   - mkdir -p $FLATPAK_DEST/lib/ffmpeg
@@ -37,25 +25,22 @@ cleanup:
  - /bin/girtod
 
 modules:
-- name: ldc-runtime
-  buildsystem: simple
-  build-commands:
-    - mkdir -p ${FLATPAK_DEST}/lib
-    - cp -r /usr/lib/sdk/ldc/lib/lib{druntime,phobos2}-ldc-shared.so* ${FLATPAK_DEST}/lib/
 
-- name: libyaml
+- name: libfyaml
+  buildsystem: autotools
+  cleanup:
+   - /bin
   sources:
-   - type: git
-     url: https://github.com/yaml/libyaml.git
-     tag: '0.2.5'
+   - type: archive
+     url: https://github.com/pantoniou/libfyaml/releases/download/v0.9/libfyaml-0.9.tar.gz
+     sha256: 7731edc5dfcc345d5c5c9f6ce597133991a689dabede393cd77bae89b327cd6d
 
 - name: libxmlb
   buildsystem: meson
   config-opts:
-   - -Dstemmer=true
+   - -Dstemmer=false
    - -Dintrospection=false
    - -Dgtkdoc=false
-   - -Dstemmer=false
   cleanup:
    - /share/man/man1/*
    - /bin/*
@@ -63,20 +48,32 @@ modules:
   sources:
    - type: git
      url: https://github.com/hughsie/libxmlb.git
-     tag: '0.3.14'
+     tag: '0.3.24'
 
 - name: appstream
   buildsystem: meson
   config-opts:
    - -Dcompose=true
-   - -Dapidocs=false
    - -Dstemming=false
+   - -Dapidocs=false
+   - -Dman=false
   cleanup:
    - /share/metainfo/*
   sources:
    - type: git
      url: https://github.com/ximion/appstream.git
-     tag: v1.0.2
+     tag: v1.1.1
+
+- name: onetbb
+  buildsystem: cmake-ninja
+  config-opts:
+   - -DCMAKE_BUILD_TYPE=Release
+   - -DTBB_TEST=OFF
+   - -DTBB_EXAMPLES=OFF
+  sources:
+   - type: git
+     url: https://github.com/uxlfoundation/oneTBB.git
+     tag: v2022.2.0
 
 - name: lmdb
   no-autogen: true
@@ -90,31 +87,11 @@ modules:
    - /bin/*
   sources:
    - type: archive
-     url: https://git.openldap.org/openldap/openldap/-/archive/LMDB_0.9.30/openldap-LMDB_0.9.30.tar.bz2
-     sha256: eb16ed6fd535b85857c331b93e7f9fd790bc9fcea3fa26162befdc1ba2775668
+     url: https://git.openldap.org/openldap/openldap/-/archive/LMDB_0.9.33/openldap-LMDB_0.9.33.tar.gz
+     sha256: 476801f5239c88c7de61c3390502a5d13965ecedef80105b5fb0fcb8373d1e53
    - type: file
      path: extra/lmdb.pc
      dest: libraries/liblmdb/
-
-- name: gir-to-d
-  buildsystem: meson
-  build-options:
-    env:
-      # NOTE: we need --allinst here to work around a compiler bug in the
-      # Flatpak-packaged version of LDC that makes it fail to generate
-      # code for a necessary template instantiation
-      DFLAGS: -O -g -release -wi --allinst
-  sources:
-   - type: git
-     url: https://github.com/gtkd-developers/gir-to-d.git
-     tag: v0.23.2
-
-- name: glib-d
-  buildsystem: meson
-  sources:
-   - type: git
-     url: https://github.com/gtkd-developers/GlibD.git
-     tag: v2.4.3
 
 - name: optipng
   build-options:
@@ -122,24 +99,46 @@ modules:
      - --with-system-libs
   sources:
    - type: archive
-     url: https://netcologne.dl.sourceforge.net/project/optipng/OptiPNG/optipng-0.7.7/optipng-0.7.7.tar.gz
-     sha256: 4f32f233cef870b3f95d3ad6428bfe4224ef34908f1b42b0badf858216654452
+     url: https://downloads.sourceforge.net/project/optipng/OptiPNG/optipng-7.9.1/optipng-7.9.1.tar.gz
+     sha256: c2579be58c2c66dae9d63154edcb3d427fef64cb00ec0aff079c9d156ec46f29
+
+- name: nlohmann-json
+  buildsystem: meson
+  sources:
+   - type: archive
+     url: https://github.com/nlohmann/json/archive/refs/tags/v3.12.0.tar.gz
+     sha256: 4b92eb0c06d10683f7447ce9406cb97cd4b453be18d7279320f7b2f025c10187
+
+- name: inja
+  buildsystem: meson
+  sources:
+   - type: git
+     url: https://github.com/ximion/inja.git
+     commit: f2bf5ff3cc9194e2dd2d1a1cdd82ec82b8ac80ff
+
+- name: catch2
+  buildsystem: cmake-ninja
+  builddir: true
+  config-opts:
+   - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+  sources:
+   - type: archive
+     url: https://github.com/catchorg/Catch2/archive/refs/tags/v3.11.0.tar.gz
+     sha256: 82fa1cb59dc28bab220935923f7469b997b259eb192fb9355db62da03c2a3137
 
 - name: appstream-generator
   buildsystem: meson
   config-opts:
+   - --wrap-mode=nofallback
    - -Ddownload-js=false
   build-options:
-    append-path: /usr/lib/sdk/node18/bin
+    append-path: /usr/lib/sdk/node24/bin
     env:
       XDG_CACHE_HOME: /run/build/appstream-generator/flatpak-node/cache
   build-commands:
-   - HOME=$PWD yarn config --offline set yarn-offline-mirror $FLATPAK_BUILDER_BUILDDIR/flatpak-node/yarn-mirror
-   - HOME=$PWD MESON_SOURCE_ROOT=$PWD/.. ASGEN_YARN_EXTRA_ARGS="--offline --ignore-scripts" ../contrib/setup/build_js.sh
+   - HOME=$PWD MESON_SOURCE_ROOT=$PWD/.. ../contrib/setup/build_js.sh 'npm --offline --cache=/run/build/appstream-generator/npm-cache/'
   sources:
-   - yarn-sources.json
+   - npm-sources.json
    - type: git
      url: https://github.com/ximion/appstream-generator.git
-     tag: v0.9.1
-   - type: patch
-     path: patches/asgen-metainfo-add-developer.patch
+     tag: v0.10.1
