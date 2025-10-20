@@ -113,8 +113,8 @@ modules:
   buildsystem: meson
   sources:
    - type: git
-     url: https://github.com/ximion/inja.git
-     commit: f2bf5ff3cc9194e2dd2d1a1cdd82ec82b8ac80ff
+     url: https://github.com/pantor/inja.git
+     commit: 7d1b4600b68595085a949743331c2e5673f511ea
 
 - name: catch2
   buildsystem: cmake-ninja
