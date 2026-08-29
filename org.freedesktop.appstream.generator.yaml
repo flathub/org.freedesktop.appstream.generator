@@ -3,8 +3,6 @@ app-id: org.freedesktop.appstream.generator
 runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
-sdk-extensions:
- - org.freedesktop.Sdk.Extension.node24
 command: appstream-generator
 separate-locales: false
 
@@ -22,47 +20,81 @@ cleanup:
  - /lib/*.la
  - /share/installed-tests
  - /share/gir-1.0
- - /bin/girtod
 
 modules:
 
-- name: libfyaml
-  buildsystem: autotools
-  cleanup:
-   - /bin
+- name: check
+  buildsystem: cmake-ninja
   sources:
-   - type: archive
-     url: https://github.com/pantoniou/libfyaml/releases/download/v0.9/libfyaml-0.9.tar.gz
-     sha256: 7731edc5dfcc345d5c5c9f6ce597133991a689dabede393cd77bae89b327cd6d
+  - type: archive
+    url: https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz
+    sha256: a8de4e0bacfb4d76dd1c618ded263523b53b85d92a146d8835eb1a52932fa20a
 
-- name: libxmlb
+- name: libfyaml
+  buildsystem: cmake-ninja
+  config-opts:
+  - -DENABLE_NETWORK=OFF
+  - -DENABLE_LIBCLANG=OFF
+  cleanup:
+  - /bin
+  sources:
+  - type: archive
+    url: https://github.com/pantoniou/libfyaml/releases/download/v0.9.6/libfyaml-0.9.6.tar.gz
+    sha256: a59cc3331e2eb903ec36933ad52a45888041cac31e44f553a00511131242c483
+
+- name: blake3
+  buildsystem: cmake-ninja
+  builddir: true
+  subdir: c/
+  config-opts:
+  - -DBUILD_SHARED_LIBS:BOOL=YES
+  sources:
+  - type: archive
+    url: https://github.com/BLAKE3-team/BLAKE3/archive/refs/tags/1.8.7.tar.gz
+    sha256: c6782a28842b1c0478524ac06a4f2ede784038ee298d6e2162c0b089c4306a3c
+
+- name: libvips
+  builddir: true
   buildsystem: meson
   config-opts:
-   - -Dstemmer=false
-   - -Dintrospection=false
-   - -Dgtkdoc=false
+  - -Ddeprecated=false
+  - -Dexamples=false
+  - -Dintrospection=disabled
+  - -Dmodules=disabled
+  - -Dppm=false
+  - -Danalyze=false
+  - -Dradiance=false
+  - -Dmagick=disabled
+  - -Dpoppler=disabled
+  - -Dtiff=disabled
+  - -Dpng=enabled
+  - -Djpeg-xl=enabled
+  - -Drsvg=enabled
+  - -Dwebp=enabled
+  - -Dheif=enabled
   cleanup:
-   - /share/man/man1/*
-   - /bin/*
-   - /app/libexec/installed-tests
+  - /bin/vips*
+  - /share/man
   sources:
-   - type: git
-     url: https://github.com/hughsie/libxmlb.git
-     tag: '0.3.24'
+  - type: archive
+    url: https://github.com/libvips/libvips/releases/download/v8.18.6/vips-8.18.6.tar.xz
+    sha256: 3c41e1d5458081bfa4a5bc54e116c46259c75c6760a18027764555632b9dda3e
 
 - name: appstream
   buildsystem: meson
   config-opts:
-   - -Dcompose=true
-   - -Dstemming=false
-   - -Dapidocs=false
-   - -Dman=false
+  - -Dcompose=true
+  - -Dgir=false
+  - -Dman=false
+  - -Dapidocs=false
+  - -Dbash-completion=false
+  - -Dstemming=false
   cleanup:
-   - /share/metainfo/*
+  - /share/metainfo/*
   sources:
-   - type: git
-     url: https://github.com/ximion/appstream.git
-     tag: v1.1.1
+  - type: git
+    url: https://github.com/ximion/appstream.git
+    tag: v1.2.0
 
 - name: onetbb
   buildsystem: cmake-ninja
@@ -73,7 +105,7 @@ modules:
   sources:
    - type: git
      url: https://github.com/uxlfoundation/oneTBB.git
-     tag: v2022.2.0
+     tag: v2023.1.0
 
 - name: lmdb
   no-autogen: true
@@ -87,8 +119,8 @@ modules:
    - /bin/*
   sources:
    - type: archive
-     url: https://git.openldap.org/openldap/openldap/-/archive/LMDB_0.9.33/openldap-LMDB_0.9.33.tar.gz
-     sha256: 476801f5239c88c7de61c3390502a5d13965ecedef80105b5fb0fcb8373d1e53
+     url: https://git.openldap.org/openldap/openldap/-/archive/LMDB_0.9.35/openldap-LMDB_0.9.35.tar.gz
+     sha256: 0d090c6a7c85a4f31a2ab0d734554c21097f24752393a190b0e51996b08f48c4
    - type: file
      path: extra/lmdb.pc
      dest: libraries/liblmdb/
@@ -112,9 +144,17 @@ modules:
 - name: inja
   buildsystem: meson
   sources:
-   - type: git
-     url: https://github.com/pantor/inja.git
-     commit: 7d1b4600b68595085a949743331c2e5673f511ea
+   - type: archive
+     url: https://github.com/pantor/inja/archive/refs/tags/v3.5.0.tar.gz
+     sha256: a5f0266673c59028eab6ceeddd8b862c70abfeb32fb7a5387c16bf46f3269ab2
+
+- name: quill
+  buildsystem: meson
+  builddir: true
+  sources:
+  - type: archive
+    url: https://github.com/odygrd/quill/releases/download/v12.2.2/quill-12.2.2.zip
+    sha256: 45eb0d5689e4563381f3635af0d307b2533cf2f0e02b4eaed709c5015524d02b
 
 - name: catch2
   buildsystem: cmake-ninja
@@ -123,22 +163,18 @@ modules:
    - -DCMAKE_BUILD_TYPE=RelWithDebInfo
   sources:
    - type: archive
-     url: https://github.com/catchorg/Catch2/archive/refs/tags/v3.11.0.tar.gz
-     sha256: 82fa1cb59dc28bab220935923f7469b997b259eb192fb9355db62da03c2a3137
+     url: https://github.com/catchorg/Catch2/archive/refs/tags/v3.16.0.tar.gz
+     sha256: 0957cae5821b17ce07f0833aaa52b5137643a8382203221f363a8303c109af34
 
 - name: appstream-generator
   buildsystem: meson
   config-opts:
-   - --wrap-mode=nofallback
-   - -Ddownload-js=false
-  build-options:
-    append-path: /usr/lib/sdk/node24/bin
-    env:
-      XDG_CACHE_HOME: /run/build/appstream-generator/flatpak-node/cache
-  build-commands:
-   - HOME=$PWD MESON_SOURCE_ROOT=$PWD/.. ../contrib/setup/build_js.sh 'npm --offline --cache=/run/build/appstream-generator/npm-cache/'
+  - -Dman=false
+  post-install:
+  # Flathub does not understand <heading/> yet
+  - sed -i 's|<heading>|<p>|g; s|</heading>|</p>|g' "$FLATPAK_DEST/share/metainfo/org.freedesktop.appstream.generator.metainfo.xml"
   sources:
-   - npm-sources.json
    - type: git
      url: https://github.com/ximion/appstream-generator.git
-     tag: v0.10.1
+     commit: 0e63c36a321bd715ea92f9227910822b40545135  # v1.0.0 but with allowing to disable manpage creation
+     #tag: v1.0.0
